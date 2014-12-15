@@ -10,15 +10,13 @@ import controllers.*;
 
 public class Main extends BasicGame {
 
-	Player player;
-	AIPlayer ai;
 	BallController ballCntrl;
+	RacketController racketCntrl;
 	
 	public Main(String title) {
 		super(title);
-		player = new Player(true);
-		ai = new AIPlayer();
-		ballCntrl = new BallController();
+		racketCntrl = new RacketController();
+		ballCntrl = new BallController(racketCntrl);
 		
 		// TODO Auto-generated constructor stub
 	}
@@ -39,20 +37,17 @@ public class Main extends BasicGame {
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException {
 		// TODO Auto-generated method stub
-		g.draw(ballCntrl.getBall().getShape());
-		g.draw(player.getRacket().getShape());
-		g.draw(ai.getRacket().getShape());
-		g.draw(ballCntrl.getLeft().getShape());
-		g.draw(ballCntrl.getRight().getShape());
-		
+		g.draw(ballCntrl.getBall());
+		g.draw(racketCntrl.getPlayer());
+		g.draw(racketCntrl.getAi());
 		
 		// Score
-		g.drawString("" + player.getScore(), 50, 50);
-		g.drawString("" + ai.getScore(), 550, 50);
+		g.drawString("" + racketCntrl.getPlayer().getScore(), 50, 50);
+		g.drawString("" + racketCntrl.getAi().getScore(), 550, 50);
 		
 		// Data for debugging manually
-		g.drawString("Racket X: " + player.getRacket().getX(), 200, 200);
-		g.drawString("Racket Y: " + player.getRacket().getY(), 200, 220);
+		g.drawString("Racket X: " + racketCntrl.getPlayer().getX(), 200, 200);
+		g.drawString("Racket Y: " + racketCntrl.getPlayer().getY(), 200, 220);
 		g.drawString("Ball X: " + ballCntrl.getBall().getX(), 200, 240);
 		g.drawString("Ball Y: " + ballCntrl.getBall().getY(), 200, 260);
 		g.drawString("Ball rotation: " + ballCntrl.getRotation(), 200, 280);
@@ -71,9 +66,9 @@ public class Main extends BasicGame {
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		// TODO Auto-generated method stub
-		ballCntrl.handleBall(delta, player, ai);
-		player.handleInput(delta, gc);
-		ai.handleMovement(ballCntrl);
+		ballCntrl.handleBall(delta);
+		racketCntrl.handleInput(delta, gc);
+		racketCntrl.handleAiMovement(ballCntrl);
 		
 	}
 

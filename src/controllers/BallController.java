@@ -3,9 +3,10 @@ package controllers;
 import java.util.Random;
 
 import model.Ball;
-import model.Side;
+import model.Racket;
 
 public class BallController {
+	private RacketController racketCntrl;
 	private Ball ball;
 	private float rotationDeg;
 	private boolean goingLeft;
@@ -14,16 +15,13 @@ public class BallController {
 	private boolean touchedLeft;
 	private boolean leftScored;
 	private boolean rightScored;
-	private Side left;
-	private Side right;
 	
-	public BallController() {
+	public BallController(RacketController racketCntrl) {
+		this.racketCntrl = racketCntrl;
 		leftScored = false;
 		rightScored = false;
 		rotationDeg = genRandRotation();
-		left = new Side(true);
-		right = new Side(false);
-		ball = new Ball();
+		ball = new Ball(320,240,20,20);
 
 		calcDirections();
 		
@@ -38,12 +36,6 @@ public class BallController {
 	public Ball getBall() {
 		return ball;
 	}
-	public Side getLeft() {
-		return left;
-	}
-	public Side getRight() {
-		return right;
-	}
 	
 	public float getRotation() {
 		return rotationDeg;
@@ -56,7 +48,7 @@ public class BallController {
 		return goingTop;
 	}
 	
-	public void handleBall(float delta, Player player, AIPlayer ai) {
+	public void handleBall(float delta) {
 		if(ball.getX() + (float)Math.cos(Math.toRadians(rotationDeg)) * (float)(0.3*delta) <= 640 - (ball.getWidth()/2) &&
 				ball.getX() + (float)Math.cos(Math.toRadians(rotationDeg)) * (float)(0.3*delta) >= 0 + (ball.getWidth()/2)) {
 			
@@ -68,14 +60,15 @@ public class BallController {
 					ball.setY( ball.getY() + (float)Math.sin(Math.toRadians(rotationDeg)) * (float)(0.3*delta));
 		}
 				
-		checkForCollision(player, ai);
-		checkForScore(player, ai);
+		checkForCollision();
+		checkForScore();
 	}
 	
 	
-	private void checkForCollision(Player player, AIPlayer ai) {
+	private void checkForCollision() {
 		
-		//TODO finish dis shit
+		Racket player = racketCntrl.getPlayer();
+		Racket ai = racketCntrl.getAi();
 		
 		// Top border collisions
 		if(ball.getY() - (ball.getHeight()/2)  <= 1 && goingTop) {
@@ -84,7 +77,7 @@ public class BallController {
 				goingTop= false;
 				touched = 1;
 			}
-			else if(touched != 2) {
+			else if(!goingLeft &&touched != 2) {
 				rotationDeg = 90 - (rotationDeg - 270);
 				goingTop = false;
 				touched = 2;
@@ -97,7 +90,7 @@ public class BallController {
 				goingTop = true;
 				touched = 3;
 			}
-			else if(touched != 4) {
+			else if(!goingLeft && touched != 4) {
 				rotationDeg = 360 - rotationDeg;
 				goingTop = true;
 				touched = 4;
@@ -106,7 +99,7 @@ public class BallController {
 		
 		// Rackets collisions
 		
-		if(player.getRacket().getShape().intersects(ball.getShape()) && (!touchedLeft || leftScored || rightScored))
+		if(player.intersects(ball) && (!touchedLeft || leftScored || rightScored))
 		{
 			if(goingTop) {
 				rotationDeg = 360 - (rotationDeg - 180);
@@ -118,7 +111,7 @@ public class BallController {
 			}
 			touchedLeft = true;
 		}
-		else if(ai.getRacket().getShape().intersects(ball.getShape()) && (touchedLeft || leftScored || rightScored)) {
+		else if(ai.intersects(ball) && (touchedLeft || leftScored || rightScored)) {
 			if(goingTop) {
 				rotationDeg = 270 - (rotationDeg - 270);
 				goingLeft = true;
@@ -132,8 +125,11 @@ public class BallController {
 		
 	}
 	
-	private void checkForScore(Player player, AIPlayer ai) {
-		if(left.getShape().intersects(ball.getShape())) {
+	private void checkForScore() {
+		Racket player = racketCntrl.getPlayer();
+		Racket ai = racketCntrl.getAi();
+		
+		if(ball.getCenterX() - (ball.getWidth()/2) <= 0) {
 			ai.incrementScore();
 			ball.resetBall();
 			rotationDeg = genRandRotation();
@@ -143,7 +139,7 @@ public class BallController {
 			//rotationDeg = a;
 			
 		}
-		else if(right.getShape().intersects(ball.getShape())) {
+		else if(ball.getCenterX() + (ball.getWidth()/2) >= 640) {
 			player.incrementScore();
 			ball.resetBall();
 			rotationDeg = genRandRotation();
