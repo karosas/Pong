@@ -4,7 +4,11 @@ import java.util.Random;
 
 import model.Ball;
 import model.Racket;
-
+/**
+ * BallController class responsible for handling the ball - checking and handling collisions mostly.
+ * @author Edgaras
+ *
+ */
 public class BallController {
 	private RacketController racketCntrl;
 	private Ball ball;
@@ -15,7 +19,11 @@ public class BallController {
 	private boolean touchedLeft;
 	private boolean leftScored;
 	private boolean rightScored;
-	
+	/**
+	 * Constructor creates a new RacketController, sets random ball rotation, creates a ball.
+	 * 
+	 * @param racketCntrl RacketController object.
+	 */
 	public BallController(RacketController racketCntrl) {
 		this.racketCntrl = racketCntrl;
 		leftScored = false;
@@ -32,22 +40,40 @@ public class BallController {
 			touchedLeft = true;
 		}
 	}
-	
+	/**
+	 * Returns a Ball object
+	 * @return ball
+	 */
 	public Ball getBall() {
 		return ball;
 	}
-	
+	/**
+	 * Gets rotation of a ball.
+	 * @return rotation of the ball.
+	 */
 	public float getRotation() {
 		return rotationDeg;
 	}
-	
+	/**
+	 * Returns boolean whether ball is going left or not.
+	 * @return boolean if ball is going left or not.
+	 */
 	public boolean isGoingLeft() {
 		return goingLeft;
 	}
+	/**
+	 * Returns boolean whether ball is going up or not.
+	 * @return boolean if ball is going up or not.
+	 */
 	public boolean isGoingUp() {
 		return goingTop;
 	}
-	
+	/**
+	 * Method to handle speed and rotation of the ball.
+	 * Calculates new x and y coordinates of the ball.
+	 * Calls methods 'checkForCollision()' and 'checkForScore()' at the end.
+	 * @param delta The change in time since the last render or update was made.
+	 */
 	public void handleBall(float delta) {
 		if(ball.getX() + (float)Math.cos(Math.toRadians(rotationDeg)) * (float)(0.3*delta) <= 640 - (ball.getWidth()/2) &&
 				ball.getX() + (float)Math.cos(Math.toRadians(rotationDeg)) * (float)(0.3*delta) >= 0 + (ball.getWidth()/2)) {
@@ -64,7 +90,9 @@ public class BallController {
 		checkForScore();
 	}
 	
-	
+	/**
+	 * Checks for collision and changes rotation accordingly.
+	 */
 	private void checkForCollision() {
 		
 		Racket player = racketCntrl.getPlayer();
@@ -124,7 +152,10 @@ public class BallController {
 		}
 		
 	}
-	
+	/**
+	 * Checks if point was scored or not.
+	 * If point was scored adds it to player who scored it and resets the ball.
+	 */
 	private void checkForScore() {
 		Racket player = racketCntrl.getPlayer();
 		Racket ai = racketCntrl.getAi();
@@ -150,6 +181,11 @@ public class BallController {
 		}
 		 
 	}
+	/**
+	 * Generates random rotation and checks if ball wont get stuck with it
+	 * For example go absolutely straight up or down and wont reach any racket.
+	 * @return rotation
+	 */
 	private float genRandRotation() {
 		Random r = new Random();
 		float nRotation = r.nextFloat() * (360f - 0f) + 0f;
@@ -159,7 +195,10 @@ public class BallController {
 		}
 		return nRotation;
 	}
-	
+	/**
+	 * Calculates directions.
+	 * According to the rotation sets 'goingLeft', 'goingUp' booleans to true or false.
+	 */
 	private void calcDirections() {
 		if(rotationDeg > 180 && rotationDeg < 360) {
 			goingTop = true;

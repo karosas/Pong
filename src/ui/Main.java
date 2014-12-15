@@ -7,12 +7,19 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import controllers.*;
-
+/**
+ * Main user interface class which extends 'BasicGame' which comes from Slick2D game engine.
+ * @author Edgaras Ausvicas
+ *
+ */
 public class Main extends BasicGame {
 
 	BallController ballCntrl;
 	RacketController racketCntrl;
-	
+	/**
+	 * Constructor which sets game title and instantiates ball and racket controllers.
+	 * @param title Title of the game shown in the top of the game window.
+	 */
 	public Main(String title) {
 		super(title);
 		racketCntrl = new RacketController();
@@ -20,6 +27,12 @@ public class Main extends BasicGame {
 		
 		// TODO Auto-generated constructor stub
 	}
+	/**
+	 * Main function. Tries to create game screen with custom dimensions.
+	 * @throws SlickException if something goes wrong prints error log.
+	 * @param arguments
+	 * 
+	 */
 	public static void main(String[] arguments)
     {
         try
@@ -34,9 +47,17 @@ public class Main extends BasicGame {
         }
     }
 
+	/**
+	 * Rendering is done here.
+	 * 'draw' method renders slick2d shapes to the screen.
+	 * 'drawString' renders desired string at specified coordinates.
+	 * @param gc GameContainer object from Slick2d engine.
+	 * @param g Graphics object from Slick2D engine.
+	 * @
+	 */
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException {
-		// TODO Auto-generated method stub
+
 		g.draw(ballCntrl.getBall());
 		g.draw(racketCntrl.getPlayer());
 		g.draw(racketCntrl.getAi());
@@ -57,12 +78,20 @@ public class Main extends BasicGame {
 		g.drawString("Going Up: " + vertical, 200, 320);
 	}
 
+	/**
+	 * If something needs to be done on initiation.
+	 * Needs to be implemented by extending 'BasicGame'. 
+	 */
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * Updating is done here.
+	 * Basically calling all the method who does the calculations.
+	 */
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		// TODO Auto-generated method stub
